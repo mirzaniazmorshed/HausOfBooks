@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %} Welcome, {{user.username}} {% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="user-info">
+        <h5 class="text-center m-4">Welcome, {{user.first_name}} {{user.last_name}}</h5>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Username: </strong> {{user.username}}</li>
+            <li class="list-group-item"><strong>First Name: </strong>{{user.first_name}}</li>
+            <li class="list-group-item"><strong>Last Name: </strong>{{user.last_name}}</li>
+            <li class="list-group-item"><strong>Email: </strong>{{user.email}}</li>
+            <li class="list-group-item"><strong>Balance: </strong>{{user.account.balance}}$</li>
+            <li class="list-group-item"><strong>Country: </strong>{{user.address.country}}</li>
+            <li class="list-group-item"><strong>City: </strong>{{user.address.city}}</li>
+            <li class="list-group-item"><strong>Postal Code: </strong>{{user.address.postal_code}}</li>
+            <li class="list-group-item"><strong>Gender: </strong>{{user.account.gender}}</li>
+          </ul>
+    </div>
+
+    <div class="user-history">
+        <h5 class="text-center m-4">Transaction History</h5>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Book Name</th>
+                <th scope="col">Book Price</th>
+                <th scope="col">After Balance</th>
+                <th scope="col">Date</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for history in histories %}
+                <tr>
+                    <th scope="row">{{history.id}}</th>
+                    <th>{{history.book_name}}</th>
+                    <th>{{history.book_price}}</th>
+                    <th>{{history.after_balance}}</th>
+                    <th>{{history.created_on}}</th>
+                    <th>
+                        {% if history.book_return == False %}
+                            <a href="{% url 'book_return' history.id %}" class="btn btn-primary">Return Book</a>
+                        {% else %}
+                        <a href="" class="btn btn-success">Returned</a>
+                        {% endif %}
+                    </th>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+    </div>
+</div>
+{% endblock %}
+

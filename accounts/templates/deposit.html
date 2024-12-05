@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %} User Deposit {% endblock %}
+
+{% block body %}
+<div class="container">
+    <form method="post" style="width: 50%; margin: auto">
+        {% csrf_token %}
+        <!-- {{ form|crispy }} -->
+        {% for frm in form %}
+        {{frm.label_tag}}
+        {{frm}}
+        {{frm.errors}}
+        {% endfor %}
+        <input type="submit" value="Submit" class="btn btn-danger mt-3">
+    </form>
+</div>
+{% endblock %}
+

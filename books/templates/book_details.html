@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %} Book Details Page {% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="book-details-container" style="max-width: 800px; margin: auto; padding-top: 50px;">
+        <!-- Book Title -->
+        <h1 class="text-center mb-4" style="font-size: 2.5rem; color: #333;">{{details.title}}</h1>
+        
+        <!-- Book Image -->
+        <div class="text-center mb-4">
+            <img src="{{details.image.url}}" alt="{{details.title}}" style="max-width: 100%; height: auto; border-radius: 8px;">
+        </div>
+
+        <!-- Book Description -->
+        <p class="lead text-muted" style="font-size: 1.1rem;">{{details.description}}</p>
+        
+        <!-- Book Price -->
+        <strong class="d-block mb-4" style="font-size: 1.3rem; color: #d9534f;">Price: ${{details.price}}</strong>
+
+        <!-- Borrow Button Logic -->
+        {% if user.is_authenticated %}
+            {% if user.account.balance < details.price and is_borrowed == False %}
+                <a href="" class="btn btn-outline-warning disabled">Insufficient Balance</a>
+            {% elif is_borrowed == False %}
+                <a href="{% url 'book_borrow' details.id %}" class="btn btn-outline-warning">Borrow Book</a>
+            {% else %}
+                <a href="" class="btn btn-outline-warning disabled">Already Borrowed</a>
+            {% endif %}
+        {% endif %}
+
+        <!-- Categories -->
+        <div class="mt-4 mb-4">
+            {% for category in details.categories.all %}
+                <a href="#" class="badge badge-primary" style="font-size: 1rem; margin-right: 5px;">{{category}}</a>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <hr class="my-5">
+
+    <!-- Reviews Section -->
+    <div class="reviews-container">
+        <div class="row">
+            {% if is_borrowed %}
+                <div class="col-md-6">
+                    <p><strong>Write a review:</strong></p>
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for frm in form %}
+                            <div class="form-group">
+                                {{frm}}
+                                <div class="text-danger">{{frm.errors}}</div>
+                            </div>
+                        {% endfor %}
+                        <input type="submit" value="Submit" class="btn btn-outline-info mt-3">
+                    </form>
+                </div>
+            {% endif %}
+            
+            <div class="{% if is_borrowed %}col-md-6{% else %}col-12{% endif %}">
+                {% if reviews %}
+                    <h4>All Reviews ({{reviews|length}})</h4>
+                    {% for review in reviews %}
+                        <div class="card mb-3 shadow-sm" style="border-radius: 10px;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 1.2rem; color: #007bff;">{{review.name}}</h5>
+                                <p class="card-text" style="font-size: 1rem; color: #555;">{{review.body}}</p>
+                                <p class="card-text"><small class="text-muted">{{review.created_on}}</small></p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No reviews yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
