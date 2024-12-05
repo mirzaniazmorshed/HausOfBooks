@@ -77,7 +77,7 @@ class UserDepositView(LoginRequiredMixin,FormView):
         account.save(
             update_fields = ['balance']
         )
-        self.send_transaction_email('Deposit Message', amount, 'Deposite')
+        self.send_transaction_email('Deposit Message', amount, 'Deposit')
         return super().form_valid(form)
 
 class UserProfileView(LoginRequiredMixin,TemplateView):
